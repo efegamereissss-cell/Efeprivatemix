@@ -1,0 +1,602 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Efe Özel - Premium Sürüm</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        :root {
+            --bg-base: #000000;
+            --bg-panel: #0a0a0a;
+            --bg-hover: #1f1f1f;
+            --text-base: #ffffff;
+            --text-muted: #b3b3b3;
+            --accent: #1ed760;
+            --accent-hover: #3be477;
+            --glass-bg: rgba(10, 10, 10, 0.6);
+            --border-color: rgba(255,255,255,0.08);
+        }
+
+        * { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Inter', sans-serif; }
+
+        body {
+            background-color: var(--bg-base);
+            color: var(--text-base);
+            height: 100vh;
+            display: flex;
+            flex-direction: column;
+            overflow: hidden;
+            user-select: none;
+        }
+
+        /* YUMUŞAK KAYDIRMA ÇUBUĞU */
+        ::-webkit-scrollbar { width: 10px; }
+        ::-webkit-scrollbar-track { background: transparent; }
+        ::-webkit-scrollbar-thumb { background: rgba(255, 255, 255, 0.2); border-radius: 10px; border: 2px solid var(--bg-base); }
+        ::-webkit-scrollbar-thumb:hover { background: rgba(255, 255, 255, 0.4); }
+
+        .app-layout {
+            display: flex;
+            flex: 1;
+            height: calc(100vh - 96px); /* Alt oynatıcıya yer bırak */
+        }
+
+        /* --- SOL MENÜ (ULTRA MİNİMAL VE ŞIK) --- */
+        .sidebar {
+            width: 260px;
+            background-color: var(--bg-base);
+            padding: 24px 16px;
+            display: flex;
+            flex-direction: column;
+            gap: 32px;
+            border-right: 1px solid var(--border-color);
+            z-index: 10;
+        }
+
+        .logo { font-size: 24px; font-weight: 800; display: flex; align-items: center; gap: 12px; letter-spacing: -1px; }
+        .logo i { font-size: 28px; color: var(--text-base); }
+        
+        .nav-links { display: flex; flex-direction: column; gap: 16px; }
+        .nav-item {
+            display: flex; align-items: center; gap: 16px; color: var(--text-muted);
+            font-weight: 600; font-size: 15px; cursor: pointer; transition: all 0.3s ease;
+        }
+        .nav-item:hover, .nav-item.active { color: var(--text-base); }
+        .nav-item i { font-size: 24px; width: 28px; text-align: center; transition: transform 0.3s; }
+        .nav-item:hover i { transform: scale(1.1); }
+
+        .library-section { display: flex; flex-direction: column; gap: 16px; margin-top: 16px; }
+        .library-title { color: var(--text-muted); font-size: 12px; font-weight: 700; letter-spacing: 1.5px; text-transform: uppercase; }
+
+        /* --- ANA İÇERİK --- */
+        .main-view {
+            flex: 1;
+            background-color: var(--bg-panel);
+            position: relative;
+            overflow-y: auto;
+            border-top-left-radius: 16px;
+            margin-top: 8px;
+            box-shadow: -4px 0 24px rgba(0,0,0,0.5);
+        }
+
+        /* KAHRAMAN BÖLÜMÜ (HERO SECTION) */
+        .hero {
+            position: relative;
+            padding: 80px 40px 40px;
+            display: flex;
+            align-items: flex-end;
+            gap: 24px;
+            min-height: 340px;
+            overflow: hidden;
+            border-bottom: 1px solid var(--border-color);
+        }
+        
+        .hero-bg {
+            position: absolute; top: 0; left: 0; width: 100%; height: 100%;
+            background: linear-gradient(transparent, var(--bg-panel)), url('https://images.unsplash.com/photo-1614613535308-eb5fbd3d2c17?auto=format&fit=crop&w=1200&q=80') center/cover;
+            filter: blur(40px); opacity: 0.4; z-index: 0;
+        }
+
+        .hero-cover {
+            width: 220px; height: 220px; border-radius: 12px; object-fit: cover;
+            box-shadow: 0 12px 32px rgba(0,0,0,0.6); z-index: 1; transition: transform 0.3s;
+        }
+        .hero-cover:hover { transform: scale(1.02); }
+
+        .hero-info { z-index: 1; display: flex; flex-direction: column; gap: 8px; }
+        .badge { background-color: var(--text-base); color: #000; font-size: 11px; font-weight: 800; padding: 4px 10px; border-radius: 4px; align-self: flex-start; letter-spacing: 1px; }
+        .hero-type { font-size: 14px; font-weight: 600; text-transform: uppercase; letter-spacing: 1px; margin-top: 12px; }
+        .hero-title { font-size: 72px; font-weight: 900; letter-spacing: -3px; line-height: 1; margin: 4px 0 12px; text-shadow: 0 4px 16px rgba(0,0,0,0.5); }
+        .hero-meta { display: flex; align-items: center; gap: 8px; font-size: 14px; font-weight: 500; color: rgba(255,255,255,0.8); }
+        .hero-meta img { width: 24px; height: 24px; border-radius: 50%; border: 1px solid rgba(255,255,255,0.2); }
+        
+        /* İÇERİK KONTROLLERİ VE LİSTE */
+        .content-area { padding: 24px 40px; position: relative; z-index: 1; background: linear-gradient(rgba(0,0,0,0.2), var(--bg-panel) 20%); min-height: 500px; }
+        
+        .action-bar { display: flex; align-items: center; gap: 24px; margin-bottom: 32px; }
+        .play-all-btn {
+            width: 56px; height: 56px; border-radius: 50%; background-color: var(--accent); color: #000;
+            border: none; font-size: 20px; display: flex; align-items: center; justify-content: center;
+            cursor: pointer; transition: all 0.2s; box-shadow: 0 8px 16px rgba(29, 185, 84, 0.3);
+        }
+        .play-all-btn:hover { transform: scale(1.06); background-color: var(--accent-hover); box-shadow: 0 8px 24px rgba(29, 185, 84, 0.5); }
+        
+        .action-icon { font-size: 32px; color: var(--text-muted); cursor: pointer; transition: color 0.2s; }
+        .action-icon:hover { color: var(--text-base); }
+
+        /* ŞARKI LİSTESİ */
+        .song-list-header {
+            display: grid; grid-template-columns: 48px 1fr 1fr 60px; padding: 12px 16px;
+            border-bottom: 1px solid var(--border-color); color: var(--text-muted);
+            font-size: 13px; font-weight: 500; margin-bottom: 16px; letter-spacing: 1px; text-transform: uppercase;
+        }
+
+        .song-item {
+            display: grid; grid-template-columns: 48px 1fr 1fr 60px; align-items: center;
+            padding: 12px 16px; border-radius: 8px; cursor: pointer; transition: background-color 0.2s;
+            position: relative;
+        }
+        .song-item:hover { background-color: var(--bg-hover); }
+        .song-item.playing { background-color: rgba(255,255,255,0.05); }
+        .song-item.playing .song-title { color: var(--accent); }
+
+        .song-number { color: var(--text-muted); font-size: 16px; font-weight: 500; display: flex; align-items: center; justify-content: center; width: 24px; }
+        .song-item:hover .song-number-text { display: none; }
+        .song-item:hover .song-play-icon { display: block !important; color: var(--text-base); }
+        .song-play-icon { display: none; font-size: 16px; }
+
+        .song-info { display: flex; align-items: center; gap: 16px; }
+        .song-cover-container { position: relative; width: 48px; height: 48px; border-radius: 6px; overflow: hidden; flex-shrink: 0; box-shadow: 0 4px 12px rgba(0,0,0,0.2); }
+        .song-cover { width: 100%; height: 100%; object-fit: cover; }
+        .song-title-artist { display: flex; flex-direction: column; gap: 4px; }
+        .song-title { font-weight: 600; font-size: 16px; color: var(--text-base); }
+        .song-artist { font-size: 14px; color: var(--text-muted); }
+        
+        .song-album { color: var(--text-muted); font-size: 14px; }
+        .song-duration { color: var(--text-muted); font-size: 14px; font-variant-numeric: tabular-nums; display: flex; align-items: center; gap: 16px; }
+        .song-like { font-size: 16px; color: var(--text-muted); opacity: 0; transition: opacity 0.2s, color 0.2s; cursor: pointer; }
+        .song-item:hover .song-like { opacity: 1; }
+        .song-like.active { opacity: 1; color: var(--accent); }
+        .song-like:hover { color: var(--text-base); }
+
+        /* --- ALT OYNATICI (PREMIUM BAR) --- */
+        .player-bar {
+            height: 96px;
+            background-color: #000;
+            border-top: 1px solid var(--border-color);
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 0 24px;
+            position: relative;
+            z-index: 100;
+        }
+
+        .now-playing { display: flex; align-items: center; gap: 16px; width: 30%; min-width: 200px; }
+        .now-playing img { width: 64px; height: 64px; border-radius: 8px; object-fit: cover; box-shadow: 0 4px 16px rgba(0,0,0,0.5); }
+        .np-info { display: flex; flex-direction: column; gap: 4px; }
+        .np-title { font-size: 15px; font-weight: 700; cursor: pointer; }
+        .np-title:hover { text-decoration: underline; }
+        .np-artist { font-size: 12px; color: var(--text-muted); cursor: pointer; }
+        .np-artist:hover { color: var(--text-base); text-decoration: underline; }
+
+        .player-controls { display: flex; flex-direction: column; align-items: center; width: 40%; max-width: 722px; gap: 8px; }
+        .buttons { display: flex; align-items: center; gap: 28px; }
+        .btn-icon { background: none; border: none; color: var(--text-muted); font-size: 18px; cursor: pointer; transition: color 0.2s; }
+        .btn-icon:hover { color: var(--text-base); }
+        
+        .play-btn-circle {
+            background-color: var(--text-base); color: #000; width: 36px; height: 36px;
+            border-radius: 50%; display: flex; align-items: center; justify-content: center;
+            font-size: 16px; transition: transform 0.1s, background-color 0.2s; cursor: pointer;
+        }
+        .play-btn-circle:hover { transform: scale(1.05); }
+        .play-btn-circle:active { transform: scale(0.95); }
+
+        .progress-container { display: flex; align-items: center; gap: 12px; width: 100%; }
+        .time { font-size: 12px; font-weight: 500; color: var(--text-muted); min-width: 40px; text-align: center; font-variant-numeric: tabular-nums; }
+        .progress-bar { flex: 1; height: 6px; background-color: #333; border-radius: 3px; cursor: pointer; position: relative; display: flex; align-items: center; overflow: hidden; }
+        .progress-bar:hover { overflow: visible; }
+        .progress { height: 100%; background-color: var(--text-base); border-radius: 3px; width: 0%; transition: background-color 0.2s; }
+        .progress-handle { position: absolute; width: 14px; height: 14px; background-color: #fff; border-radius: 50%; opacity: 0; transform: translateX(-50%); transition: opacity 0.2s; box-shadow: 0 2px 6px rgba(0,0,0,0.5); }
+        .progress-bar:hover .progress { background-color: var(--accent); }
+        .progress-bar:hover .progress-handle { opacity: 1; }
+
+        .extra-controls { width: 30%; display: flex; justify-content: flex-end; align-items: center; gap: 16px; color: var(--text-muted); }
+        .extra-controls i { font-size: 18px; cursor: pointer; transition: color 0.2s; }
+        .extra-controls i:hover { color: var(--text-base); }
+        .volume-bar { width: 100px; height: 6px; background-color: #333; border-radius: 3px; cursor: pointer; display: flex; align-items: center; position: relative; }
+        .volume { height: 100%; background-color: var(--text-base); border-radius: 3px; width: 100%; }
+        .volume-bar:hover .volume { background-color: var(--accent); }
+        
+        /* TOAST NOTIFICATION */
+        #toast-container { position: fixed; bottom: 120px; left: 50%; transform: translateX(-50%); z-index: 2000; display: flex; flex-direction: column; gap: 8px; pointer-events: none; }
+        .toast { background-color: var(--text-base); color: #000; padding: 12px 24px; border-radius: 8px; font-weight: 600; font-size: 14px; box-shadow: 0 8px 16px rgba(0,0,0,0.5); opacity: 0; transform: translateY(20px); transition: all 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275); }
+        .toast.show { opacity: 1; transform: translateY(0); }
+    </style>
+</head>
+<body>
+
+    <div class="app-layout">
+        <!-- SOL MENÜ -->
+        <div class="sidebar">
+            <div class="logo">
+                <i class="fa-brands fa-spotify"></i>
+                Efe Premium
+            </div>
+            
+            <div class="nav-links">
+                <div class="nav-item active" onclick="showToast('Zaten ana sayfadasın.')"><i class="fa-solid fa-house"></i> Ana Sayfa</div>
+                <div class="nav-item" onclick="showToast('Arama özelliği yapım aşamasında.')"><i class="fa-solid fa-magnifying-glass"></i> Ara</div>
+            </div>
+            
+            <div class="library-section">
+                <div class="nav-item" onclick="showToast('Kitaplık yakında aktif edilecek.')"><i class="fa-solid fa-book-open"></i> Kitaplığın</div>
+            </div>
+        </div>
+
+        <!-- ANA İÇERİK -->
+        <div class="main-view">
+            <!-- ÜST HERO BÖLÜMÜ -->
+            <div class="hero">
+                <div class="hero-bg" id="hero-bg"></div>
+                <img src="https://images.unsplash.com/photo-1614613535308-eb5fbd3d2c17?auto=format&fit=crop&w=600&q=80" alt="Efe Özel" class="hero-cover" id="hero-img">
+                <div class="hero-info">
+                    <span class="badge">SADECE SANA ÖZEL</span>
+                    <div class="hero-type">ÖZEL SEÇKİ</div>
+                    <h1 class="hero-title">Efe'nin Mixleri</h1>
+                    <div class="hero-meta">
+                        <img src="https://images.unsplash.com/photo-1535713875002-d1d0cf377fde?auto=format&fit=crop&w=100&h=100" alt="Avatar">
+                        Efe Özel tarafından oluşturuldu • 1 Şarkı, 3 dk 14 sn
+                    </div>
+                </div>
+            </div>
+
+            <!-- ŞARKI LİSTESİ ALANI -->
+            <div class="content-area">
+                <div class="action-bar">
+                    <button class="play-all-btn" onclick="togglePlay()"><i class="fa-solid fa-play" id="main-play-icon"></i></button>
+                    <i class="fa-regular fa-heart action-icon" onclick="this.classList.toggle('fa-solid'); this.classList.toggle('fa-regular'); this.style.color = this.classList.contains('fa-solid') ? 'var(--accent)' : '';"></i>
+                    <i class="fa-solid fa-ellipsis action-icon" onclick="showToast('Seçenekler menüsü yakında eklenecek.')"></i>
+                </div>
+
+                <div class="song-list-header">
+                    <div style="text-align: center;">#</div>
+                    <div>Başlık</div>
+                    <div>Albüm</div>
+                    <div><i class="fa-regular fa-clock"></i></div>
+                </div>
+                
+                <div id="song-list-container"></div>
+            </div>
+        </div>
+    </div>
+
+    <!-- ALT MÜZİK ÇALAR -->
+    <div class="player-bar">
+        <div class="now-playing">
+            <img src="https://images.unsplash.com/photo-1614613535308-eb5fbd3d2c17?auto=format&fit=crop&w=100&q=80" alt="Cover" id="current-cover">
+            <div class="np-info">
+                <div class="np-title" id="current-title">Şarkı Seçilmedi</div>
+                <div class="np-artist" id="current-artist">-</div>
+            </div>
+            <i class="fa-regular fa-heart btn-icon" style="margin-left: 16px;" onclick="toggleLike(this, event)"></i>
+        </div>
+
+        <div class="player-controls">
+            <div class="buttons">
+                <button class="btn-icon" onclick="toggleShuffle()" id="btn-shuffle"><i class="fa-solid fa-shuffle"></i></button>
+                <button class="btn-icon" onclick="prevSong()"><i class="fa-solid fa-backward-step"></i></button>
+                <div class="play-btn-circle" onclick="togglePlay()" id="play-pause-btn"><i class="fa-solid fa-play" style="margin-left: 2px;"></i></div>
+                <button class="btn-icon" onclick="nextSong()"><i class="fa-solid fa-forward-step"></i></button>
+                <button class="btn-icon" onclick="toggleRepeat()" id="btn-repeat"><i class="fa-solid fa-repeat"></i></button>
+            </div>
+            <div class="progress-container">
+                <span class="time" id="current-time">0:00</span>
+                <div class="progress-bar" id="progress-bar" onclick="seek(event)">
+                    <div class="progress" id="progress"></div>
+                    <div class="progress-handle" id="progress-handle"></div>
+                </div>
+                <span class="time" id="total-time">0:00</span>
+            </div>
+        </div>
+
+        <div class="extra-controls">
+            <i class="fa-solid fa-list" title="Sıraya Ekle" onclick="showToast('Sırada başka şarkı yok.')"></i>
+            <i class="fa-brands fa-chromecast" title="Cihaza Bağlan" onclick="showToast('Yakındaki cihazlar aranıyor...')"></i>
+            <i class="fa-solid fa-volume-high" style="margin-left: 8px;" onclick="toggleMute()"></i>
+            <div class="volume-bar" onclick="setVolume(event)" id="volume-bar">
+                <div class="volume" id="volume"></div>
+            </div>
+            <i class="fa-solid fa-up-right-and-down-left-from-center" title="Tam Ekran" onclick="toggleFullScreen()"></i>
+        </div>
+    </div>
+
+    <div id="toast-container"></div>
+    <audio id="audio-player"></audio>
+
+    <script>
+        const songs = [
+            {
+                title: "Swirf + Russia Mix",
+                artist: "Efe Özel",
+                album: "Efe'nin Mixleri",
+                cover: "https://images.unsplash.com/photo-1614613535308-eb5fbd3d2c17?auto=format&fit=crop&w=300&q=80",
+                src: "swirf1.mp3"
+            }
+        ];
+
+        let currentSongIndex = 0;
+        let isPlaying = false;
+        let isShuffle = false;
+        let repeatMode = 0; // 0: none, 1: all, 2: one
+        let lastVolume = 1.0;
+        
+        const audioPlayer = document.getElementById('audio-player');
+        const playPauseBtn = document.getElementById('play-pause-btn');
+        const mainPlayIcon = document.getElementById('main-play-icon');
+        const progress = document.getElementById('progress');
+        const progressHandle = document.getElementById('progress-handle');
+        const currentTimeEl = document.getElementById('current-time');
+        const totalTimeEl = document.getElementById('total-time');
+        const songListContainer = document.getElementById('song-list-container');
+        const volumeBar = document.getElementById('volume');
+        const heroBg = document.getElementById('hero-bg');
+        const heroImg = document.getElementById('hero-img');
+
+        function renderSongs() {
+            songListContainer.innerHTML = '';
+            songs.forEach((song, index) => {
+                const item = document.createElement('div');
+                item.className = `song-item ${index === currentSongIndex ? 'playing' : ''}`;
+                
+                let numberContent = `<span class="song-number-text">${index + 1}</span><i class="fa-solid fa-play song-play-icon" onclick="playSong(${index}, event)"></i>`;
+                if(index === currentSongIndex && isPlaying) {
+                    numberContent = `<img src="https://open.spotifycdn.com/cdn/images/equaliser-animated-green.f93a2fd4.gif" width="14" height="14" class="song-number-text"><i class="fa-solid fa-pause song-play-icon" onclick="togglePlay(event)"></i>`;
+                }
+
+                item.innerHTML = `
+                    <div class="song-number">${numberContent}</div>
+                    <div class="song-info">
+                        <div class="song-cover-container">
+                            <img src="${song.cover}" alt="Cover" class="song-cover">
+                        </div>
+                        <div class="song-title-artist">
+                            <div class="song-title">${song.title}</div>
+                            <div class="song-artist">${song.artist}</div>
+                        </div>
+                    </div>
+                    <div class="song-album">${song.album}</div>
+                    <div class="song-duration">
+                        <i class="fa-regular fa-heart song-like" onclick="toggleLike(this, event)"></i>
+                        -:--
+                    </div>
+                `;
+                item.ondblclick = () => playSong(index);
+                songListContainer.appendChild(item);
+            });
+        }
+
+        function toggleLike(el, event) {
+            if(event) event.stopPropagation();
+            el.classList.toggle('fa-regular');
+            el.classList.toggle('fa-solid');
+            el.classList.toggle('active');
+        }
+
+        function playSong(index, event) {
+            if(event) event.stopPropagation();
+            currentSongIndex = index;
+            const song = songs[currentSongIndex];
+            
+            if (audioPlayer.src.includes(song.src)) {
+                if(!isPlaying) {
+                    audioPlayer.play();
+                    isPlaying = true;
+                }
+            } else {
+                audioPlayer.src = song.src;
+                audioPlayer.play();
+                isPlaying = true;
+            }
+            
+            // UI Güncelleme
+            document.getElementById('current-title').innerText = song.title;
+            document.getElementById('current-artist').innerText = song.artist;
+            document.getElementById('current-cover').src = song.cover;
+            heroImg.src = song.cover;
+            heroBg.style.backgroundImage = `linear-gradient(transparent, var(--bg-panel)), url('${song.cover}')`;
+            
+            updatePlayBtn();
+            renderSongs();
+        }
+
+        function togglePlay(event) {
+            if(event) event.stopPropagation();
+            if (!audioPlayer.src) {
+                playSong(0);
+                return;
+            }
+            if (isPlaying) {
+                audioPlayer.pause();
+            } else {
+                audioPlayer.play();
+            }
+            isPlaying = !isPlaying;
+            updatePlayBtn();
+            renderSongs();
+        }
+
+        function updatePlayBtn() {
+            const isPausedIcon = '<i class="fa-solid fa-play" style="margin-left: 2px;"></i>';
+            const isPlayingIcon = '<i class="fa-solid fa-pause"></i>';
+            
+            playPauseBtn.innerHTML = isPlaying ? isPlayingIcon : isPausedIcon;
+            
+            if (mainPlayIcon) {
+                mainPlayIcon.className = isPlaying ? 'fa-solid fa-pause' : 'fa-solid fa-play';
+            }
+        }
+
+        function prevSong() {
+            if(audioPlayer.currentTime > 3) {
+                audioPlayer.currentTime = 0;
+                return;
+            }
+            if(isShuffle && songs.length > 1) {
+                let newIndex = currentSongIndex;
+                while(newIndex === currentSongIndex) {
+                    newIndex = Math.floor(Math.random() * songs.length);
+                }
+                currentSongIndex = newIndex;
+            } else {
+                currentSongIndex = (currentSongIndex - 1 + songs.length) % songs.length;
+            }
+            playSong(currentSongIndex);
+        }
+
+        function nextSong(isEndedEvent = false) {
+            if(repeatMode === 2 && isEndedEvent === true) {
+                audioPlayer.currentTime = 0;
+                audioPlayer.play();
+                return;
+            }
+            if(isShuffle && songs.length > 1) {
+                let newIndex = currentSongIndex;
+                while(newIndex === currentSongIndex) {
+                    newIndex = Math.floor(Math.random() * songs.length);
+                }
+                currentSongIndex = newIndex;
+            } else {
+                currentSongIndex = (currentSongIndex + 1) % songs.length;
+            }
+            playSong(currentSongIndex);
+        }
+
+        function showToast(message) {
+            const container = document.getElementById('toast-container');
+            const toast = document.createElement('div');
+            toast.className = 'toast';
+            toast.innerText = message;
+            container.appendChild(toast);
+            
+            setTimeout(() => toast.classList.add('show'), 10);
+            setTimeout(() => {
+                toast.classList.remove('show');
+                setTimeout(() => toast.remove(), 300);
+            }, 3000);
+        }
+
+        function toggleShuffle() {
+            isShuffle = !isShuffle;
+            const btn = document.getElementById('btn-shuffle');
+            btn.style.color = isShuffle ? 'var(--accent)' : 'var(--text-muted)';
+            showToast(isShuffle ? 'Karıştırma açık' : 'Karıştırma kapalı');
+        }
+
+        function toggleRepeat() {
+            repeatMode = (repeatMode + 1) % 3;
+            const btn = document.getElementById('btn-repeat');
+            const icon = btn.querySelector('i');
+            
+            if(repeatMode === 0) {
+                btn.style.color = 'var(--text-muted)';
+                icon.className = 'fa-solid fa-repeat';
+                showToast('Tekrar kapalı');
+            } else if(repeatMode === 1) {
+                btn.style.color = 'var(--accent)';
+                icon.className = 'fa-solid fa-repeat';
+                showToast('Tümünü tekrarla');
+            } else {
+                btn.style.color = 'var(--accent)';
+                icon.className = 'fa-solid fa-repeat';
+                showToast('Geçerli şarkıyı tekrarla');
+            }
+        }
+
+        function toggleFullScreen() {
+            if (!document.fullscreenElement) {
+                document.documentElement.requestFullscreen().catch(err => {
+                    showToast('Tam ekran desteklenmiyor.');
+                });
+            } else {
+                document.exitFullscreen();
+            }
+        }
+        
+        function toggleMute() {
+            if(audioPlayer.volume > 0) {
+                lastVolume = audioPlayer.volume;
+                audioPlayer.volume = 0;
+                document.getElementById('volume').style.width = '0%';
+            } else {
+                audioPlayer.volume = lastVolume > 0 ? lastVolume : 1.0;
+                document.getElementById('volume').style.width = `${audioPlayer.volume * 100}%`;
+            }
+        }
+
+        audioPlayer.addEventListener('timeupdate', () => {
+            if (audioPlayer.duration) {
+                const percent = (audioPlayer.currentTime / audioPlayer.duration) * 100;
+                progress.style.width = `${percent}%`;
+                progressHandle.style.left = `${percent}%`;
+                currentTimeEl.innerText = formatTime(audioPlayer.currentTime);
+                totalTimeEl.innerText = formatTime(audioPlayer.duration);
+                
+                // Listedeki şarkı süresini gerçek zamanla güncelle
+                const activeDurationEl = document.querySelector('.song-item.playing .song-duration');
+                if(activeDurationEl) {
+                    const likeBtn = activeDurationEl.querySelector('.song-like').outerHTML;
+                    activeDurationEl.innerHTML = `${likeBtn} ${formatTime(audioPlayer.duration)}`;
+                }
+            }
+        });
+
+        audioPlayer.addEventListener('ended', (e) => nextSong(true));
+
+        function formatTime(seconds) {
+            if (isNaN(seconds)) return "-:--";
+            const min = Math.floor(seconds / 60);
+            const sec = Math.floor(seconds % 60);
+            return `${min}:${sec < 10 ? '0' : ''}${sec}`;
+        }
+
+        function seek(e) {
+            if(!audioPlayer.src) return;
+            const bar = document.getElementById('progress-bar');
+            const rect = bar.getBoundingClientRect();
+            const percent = (e.clientX - rect.left) / rect.width;
+            audioPlayer.currentTime = percent * audioPlayer.duration;
+        }
+
+        function setVolume(e) {
+            const bar = document.getElementById('volume-bar');
+            const rect = bar.getBoundingClientRect();
+            let percent = (e.clientX - rect.left) / rect.width;
+            if(percent < 0) percent = 0;
+            if(percent > 1) percent = 1;
+            
+            audioPlayer.volume = percent;
+            volumeBar.style.width = `${percent * 100}%`;
+        }
+
+        window.onload = () => {
+            renderSongs();
+            audioPlayer.volume = 1.0;
+            
+            if(songs.length > 0) {
+                const firstSong = songs[0];
+                document.getElementById('current-title').innerText = firstSong.title;
+                document.getElementById('current-artist').innerText = firstSong.artist;
+                document.getElementById('current-cover').src = firstSong.cover;
+                heroImg.src = firstSong.cover;
+                heroBg.style.backgroundImage = `linear-gradient(transparent, var(--bg-panel)), url('${firstSong.cover}')`;
+            }
+        };
+    </script>
+</body>
+</html>
