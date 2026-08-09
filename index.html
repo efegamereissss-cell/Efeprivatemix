@@ -713,16 +713,14 @@
                     deferredPrompt = null;
                 });
             } else {
-                // Eğer PWA otomatik kurulum desteklenmiyorsa direkt Masaüstü Kısayolu indir
-                const urlContent = "[InternetShortcut]\nURL=https://efeprivatemix.vercel.app/\n";
-                const blob = new Blob([urlContent], { type: "text/plain" });
+                // Eğer PWA otomatik kurulum desteklenmiyorsa direkt Masaüstü .exe indir
                 const link = document.createElement("a");
-                link.href = URL.createObjectURL(blob);
-                link.download = "EfePremiumMix.url";
+                link.href = "EfePremiumMix.exe";
+                link.download = "EfePremiumMix.exe";
                 document.body.appendChild(link);
                 link.click();
                 document.body.removeChild(link);
-                showToast("Uygulama kısayolu indirildi! İndirilen dosyaya çift tıklayarak anında girebilirsin.");
+                showToast("Uygulama (.exe) dosyası indiriliyor! Tıklayarak direkt açabilirsin.");
             }
         }
 
