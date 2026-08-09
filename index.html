@@ -254,6 +254,43 @@
         .hfc-badge { font-size: 10px; font-weight: 800; background: var(--accent); color: #000; padding: 2px 6px; border-radius: 4px; width: fit-content; letter-spacing: 0.5px; }
         .hfc-title { font-size: 18px; font-weight: 700; color: #fff; }
         .hfc-artist { font-size: 14px; color: var(--text-muted); }
+
+        /* MOBİL UYUM (RESPONSIVE) */
+        @media (max-width: 768px) {
+            .sidebar { display: none; }
+            .app-layout { height: calc(100vh - 120px); }
+            .main-view { border-radius: 0; margin-top: 0; }
+            
+            .hero { padding: 90px 20px 30px; text-align: center; justify-content: center; min-height: auto; }
+            .hero-info { align-items: center; }
+            .hero-title-huge { font-size: 64px; letter-spacing: -2px; text-shadow: 0 4px 12px rgba(0,0,0,0.6); }
+            .hero-type { margin-bottom: 0; }
+            
+            .hero-featured-card { flex-direction: column; padding: 12px; gap: 12px; text-align: center; }
+            .hero-featured-card img { width: 120px; height: 120px; }
+            .play-all-btn { margin-left: 0 !important; width: 48px; height: 48px; }
+            
+            .top-bar { padding: 12px 16px; gap: 8px !important; }
+            #install-btn span { display: none; } /* Sadece ikon kalsın */
+            .profile-btn { padding: 4px 12px 4px 4px; }
+            .profile-btn span { display: none; } /* İsim gizlensin, sadece PP kalsın */
+            
+            .content-area { padding: 20px 16px; }
+            .action-bar { justify-content: center; }
+            
+            .song-list-header { display: none; }
+            .song-item { grid-template-columns: 24px 1fr 40px; padding: 12px 8px; gap: 12px; }
+            .song-album { display: none; }
+            .song-duration { font-size: 12px; gap: 8px; }
+            
+            .player-bar { height: auto; padding: 12px 16px; flex-direction: column; gap: 12px; }
+            .now-playing { width: 100%; justify-content: center; }
+            .now-playing img { width: 48px; height: 48px; }
+            .player-controls { width: 100%; }
+            .extra-controls { display: none; } /* Mobilde ses ve ekstra tuşlar gizlenir */
+            
+            .modal-content { padding: 24px; width: 90%; }
+        }
     </style>
 </head>
 <body>
