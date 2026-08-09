@@ -4,6 +4,9 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Efe Özel - Premium Sürüm</title>
+    <link rel="manifest" href="manifest.json">
+    <meta name="theme-color" content="#1ed760">
+    <link rel="apple-touch-icon" href="https://images.unsplash.com/photo-1614613535308-eb5fbd3d2c17?auto=format&fit=crop&w=192&h=192&q=80">
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet">
@@ -687,6 +690,17 @@
                 heroBg.style.backgroundImage = `linear-gradient(transparent, var(--bg-panel)), url('${firstSong.cover}')`;
             }
         };
+
+        // PWA Service Worker Kaydı
+        if ('serviceWorker' in navigator) {
+            window.addEventListener('load', () => {
+                navigator.serviceWorker.register('sw.js').then(registration => {
+                    console.log('SW registered: ', registration);
+                }).catch(registrationError => {
+                    console.log('SW registration failed: ', registrationError);
+                });
+            });
+        }
     </script>
 </body>
 </html>
