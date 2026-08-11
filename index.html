@@ -373,14 +373,14 @@
                     <h1 class="hero-title-huge">MIX</h1>
                     
                     <!-- ÖNE ÇIKAN ŞARKI KARTI -->
-                    <div class="hero-featured-card" onclick="playSong(0)">
+                    <div class="hero-featured-card" onclick="playSong(1)">
                         <img src="https://images.unsplash.com/photo-1614613535308-eb5fbd3d2c17?auto=format&fit=crop&w=300&q=80" alt="Cover" id="hero-featured-img">
                         <div class="hfc-info">
                             <span class="hfc-badge">ÖNE ÇIKAN</span>
                             <div class="hfc-title">Swirf + Russia Mix</div>
                             <div class="hfc-artist">Efe Özel</div>
                         </div>
-                        <button class="play-all-btn" style="width: 48px; height: 48px; margin-left: 24px;" onclick="togglePlay(event)"><i class="fa-solid fa-play" id="hero-play-icon"></i></button>
+                        <button class="play-all-btn" style="width: 48px; height: 48px; margin-left: 24px;" onclick="playSong(1, event)"><i class="fa-solid fa-play" id="hero-play-icon"></i></button>
                     </div>
                 </div>
             </div>
@@ -628,8 +628,6 @@
             document.getElementById('current-title').innerText = song.title;
             document.getElementById('current-artist').innerText = song.artist;
             document.getElementById('current-cover').src = song.cover;
-            if(heroFeaturedImg) heroFeaturedImg.src = song.cover;
-            heroBg.style.backgroundImage = `linear-gradient(transparent, var(--bg-panel)), url('${song.cover}')`;
             
             updatePlayBtn();
             renderSongs();
@@ -828,8 +826,6 @@
                 document.getElementById('current-title').innerText = firstSong.title;
                 document.getElementById('current-artist').innerText = firstSong.artist;
                 document.getElementById('current-cover').src = firstSong.cover;
-                if(heroFeaturedImg) heroFeaturedImg.src = firstSong.cover;
-                heroBg.style.backgroundImage = `linear-gradient(transparent, var(--bg-panel)), url('${firstSong.cover}')`;
             }
         };
 
