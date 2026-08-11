@@ -938,7 +938,7 @@
         // 3. İnatla Geliştirici Araçlarını açanlar için Sonsuz Debugger Tuzağı (Sources sekmesini dondurur)
         setInterval(function() {
             (function() { return false; }['constructor']('debugger')());
-        }, 50);
+        }, 2000); // 50ms'den 2000ms'ye çıkarıldı çünkü kasma (stutter) yapıyordu
         
         // Konsolu temizle
         console.log("%cDur! Burası Zenith Music bölgesidir. Kaynak kodlarına erişim yasaktır.", "color: red; font-size: 20px; font-weight: bold;");
