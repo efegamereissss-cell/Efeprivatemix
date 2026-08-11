@@ -8,7 +8,7 @@ except Exception:
 
 if __name__ == '__main__':
     window = webview.create_window(
-        'Efe Premium Mix', 
+        'Zenith Music', 
         'https://efeprivatemix.vercel.app/',
         width=1280,
         height=720,
