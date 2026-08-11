@@ -255,6 +255,40 @@
         .hfc-title { font-size: 18px; font-weight: 700; color: #fff; }
         .hfc-artist { font-size: 14px; color: var(--text-muted); }
 
+        /* MINI VIDEO PLAYER */
+        .video-container {
+            position: fixed;
+            bottom: 120px;
+            right: 40px;
+            width: 320px;
+            height: 180px;
+            background: #000;
+            border-radius: 12px;
+            overflow: hidden;
+            box-shadow: 0 16px 48px rgba(0,0,0,0.9);
+            border: 1px solid var(--border-color);
+            z-index: 1000;
+            display: none;
+            transition: opacity 0.3s ease, transform 0.3s ease;
+            transform: translateY(20px);
+            opacity: 0;
+        }
+        .video-container.active {
+            display: block;
+            transform: translateY(0);
+            opacity: 1;
+        }
+        .video-container video {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            pointer-events: none;
+        }
+        .video-badge {
+            font-size: 10px; font-weight: 800; background: #ef4444; color: #fff; padding: 2px 6px; border-radius: 4px; margin-left: 8px; vertical-align: middle;
+        }
+
+
         /* MOBİL UYUM (RESPONSIVE) */
         @media (max-width: 768px) {
             .sidebar { display: none; }
@@ -290,6 +324,16 @@
             .extra-controls { display: none; } /* Mobilde ses ve ekstra tuşlar gizlenir */
             
             .modal-content { padding: 24px; width: 90%; }
+            
+            .video-container {
+                bottom: auto;
+                top: 70px;
+                right: 20px;
+                left: 20px;
+                width: auto;
+                height: 200px;
+                z-index: 5;
+            }
         }
     </style>
 </head>
@@ -434,6 +478,9 @@
 
     <div id="toast-container"></div>
     <audio id="audio-player"></audio>
+    <div class="video-container" id="video-container">
+        <video id="video-player" playsinline></video>
+    </div>
 
     <script>
         const songs = [
@@ -457,6 +504,28 @@
                 album: "Efe'nin Mixleri",
                 cover: "fenfero.jpg",
                 src: "fen_fero.mp3"
+            },
+            {
+                title: "Deha İnc. Alicarte x Aşkım Trap Remix",
+                artist: "Deha İnc.",
+                album: "Trap Remix",
+                cover: "https://images.unsplash.com/photo-1514525253161-7a46d19cd819?auto=format&fit=crop&w=300&q=80",
+                src: "deha.mp3"
+            },
+            {
+                title: "Para Haramsız",
+                artist: "Jeff Redd",
+                album: "Official Audio",
+                cover: "https://images.unsplash.com/photo-1621360811095-88544ba0a0f8?auto=format&fit=crop&w=300&q=80",
+                src: "jeffredd.mp3"
+            },
+            {
+                title: "Yalnızlık",
+                artist: "Efe Özel Video Mix",
+                album: "Video Klip",
+                cover: "https://images.unsplash.com/photo-1611162617474-5b21e879e113?auto=format&fit=crop&w=300&q=80",
+                src: "yalnizlik.mp4",
+                isVideo: true
             }
         ];
 
@@ -467,6 +536,13 @@
         let lastVolume = 1.0;
         
         const audioPlayer = document.getElementById('audio-player');
+        const videoPlayer = document.getElementById('video-player');
+        const videoContainer = document.getElementById('video-container');
+
+        function getActivePlayer() {
+            if(songs[currentSongIndex] && songs[currentSongIndex].isVideo) return videoPlayer;
+            return audioPlayer;
+        }
         const playPauseBtn = document.getElementById('play-pause-btn');
         const mainPlayIcon = document.getElementById('main-play-icon');
         const progress = document.getElementById('progress');
@@ -514,7 +590,7 @@
                             <img src="${song.cover}" alt="Cover" class="song-cover">
                         </div>
                         <div class="song-title-artist">
-                            <div class="song-title">${song.title}</div>
+                            <div class="song-title">${song.title}${song.isVideo ? ' <span class="video-badge">VİDEO</span>' : ''}</div>
                             <div class="song-artist">${song.artist}</div>
                         </div>
                     </div>
@@ -541,15 +617,24 @@
             currentSongIndex = index;
             const song = songs[currentSongIndex];
             
-            if (audioPlayer.src.includes(song.src)) {
-                if(!isPlaying) {
-                    audioPlayer.play();
-                    isPlaying = true;
-                }
-            } else {
-                audioPlayer.src = song.src;
-                audioPlayer.play();
+            audioPlayer.pause();
+            videoPlayer.pause();
+            
+            const player = getActivePlayer();
+            
+            if (player.src.includes(song.src)) {
+                player.play();
                 isPlaying = true;
+            } else {
+                player.src = song.src;
+                player.play();
+                isPlaying = true;
+            }
+            
+            if(song.isVideo) {
+                videoContainer.classList.add('active');
+            } else {
+                videoContainer.classList.remove('active');
             }
             
             // UI Güncelleme
@@ -565,14 +650,15 @@
 
         function togglePlay(event) {
             if(event) event.stopPropagation();
-            if (!audioPlayer.src) {
+            const player = getActivePlayer();
+            if (!player.src) {
                 playSong(0);
                 return;
             }
             if (isPlaying) {
-                audioPlayer.pause();
+                player.pause();
             } else {
-                audioPlayer.play();
+                player.play();
             }
             isPlaying = !isPlaying;
             updatePlayBtn();
@@ -595,8 +681,8 @@
         }
 
         function prevSong() {
-            if(audioPlayer.currentTime > 3) {
-                audioPlayer.currentTime = 0;
+            if(getActivePlayer().currentTime > 3) {
+                getActivePlayer().currentTime = 0;
                 return;
             }
             if(isShuffle && songs.length > 1) {
@@ -613,8 +699,8 @@
 
         function nextSong(isEndedEvent = false) {
             if(repeatMode === 2 && isEndedEvent === true) {
-                audioPlayer.currentTime = 0;
-                audioPlayer.play();
+                getActivePlayer().currentTime = 0;
+                getActivePlayer().play();
                 return;
             }
             if(isShuffle && songs.length > 1) {
@@ -681,34 +767,42 @@
         }
         
         function toggleMute() {
-            if(audioPlayer.volume > 0) {
-                lastVolume = audioPlayer.volume;
+            const player = getActivePlayer();
+            if(player.volume > 0) {
+                lastVolume = player.volume;
                 audioPlayer.volume = 0;
+                videoPlayer.volume = 0;
                 document.getElementById('volume').style.width = '0%';
             } else {
-                audioPlayer.volume = lastVolume > 0 ? lastVolume : 1.0;
-                document.getElementById('volume').style.width = `${audioPlayer.volume * 100}%`;
+                let v = lastVolume > 0 ? lastVolume : 1.0;
+                audioPlayer.volume = v;
+                videoPlayer.volume = v;
+                document.getElementById('volume').style.width = `${v * 100}%`;
             }
         }
 
-        audioPlayer.addEventListener('timeupdate', () => {
-            if (audioPlayer.duration) {
-                const percent = (audioPlayer.currentTime / audioPlayer.duration) * 100;
+        function handleTimeUpdate(player) {
+            if(player !== getActivePlayer()) return;
+            if (player.duration) {
+                const percent = (player.currentTime / player.duration) * 100;
                 progress.style.width = `${percent}%`;
                 progressHandle.style.left = `${percent}%`;
-                currentTimeEl.innerText = formatTime(audioPlayer.currentTime);
-                totalTimeEl.innerText = formatTime(audioPlayer.duration);
+                currentTimeEl.innerText = formatTime(player.currentTime);
+                totalTimeEl.innerText = formatTime(player.duration);
                 
                 // Listedeki şarkı süresini gerçek zamanla güncelle
                 const activeDurationEl = document.querySelector('.song-item.playing .song-duration');
                 if(activeDurationEl) {
                     const likeBtn = activeDurationEl.querySelector('.song-like').outerHTML;
-                    activeDurationEl.innerHTML = `${likeBtn} ${formatTime(audioPlayer.duration)}`;
+                    activeDurationEl.innerHTML = `${likeBtn} ${formatTime(player.duration)}`;
                 }
             }
-        });
+        }
+        audioPlayer.addEventListener('timeupdate', () => handleTimeUpdate(audioPlayer));
+        videoPlayer.addEventListener('timeupdate', () => handleTimeUpdate(videoPlayer));
 
         audioPlayer.addEventListener('ended', (e) => nextSong(true));
+        videoPlayer.addEventListener('ended', (e) => nextSong(true));
 
         function formatTime(seconds) {
             if (isNaN(seconds)) return "-:--";
@@ -718,11 +812,12 @@
         }
 
         function seek(e) {
-            if(!audioPlayer.src) return;
+            const player = getActivePlayer();
+            if(!player.src) return;
             const bar = document.getElementById('progress-bar');
             const rect = bar.getBoundingClientRect();
             const percent = (e.clientX - rect.left) / rect.width;
-            audioPlayer.currentTime = percent * audioPlayer.duration;
+            player.currentTime = percent * player.duration;
         }
 
         function setVolume(e) {
@@ -733,6 +828,7 @@
             if(percent > 1) percent = 1;
             
             audioPlayer.volume = percent;
+            videoPlayer.volume = percent;
             volumeBar.style.width = `${percent * 100}%`;
         }
 
