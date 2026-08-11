@@ -334,7 +334,7 @@
             
             <div class="nav-links">
                 <div class="nav-item active" onclick="showToast('Zaten ana sayfadasın.')"><i class="fa-solid fa-house"></i> Ana Sayfa</div>
-                <div class="nav-item" onclick="showToast('Arama özelliği yapım aşamasında.')"><i class="fa-solid fa-magnifying-glass"></i> Ara</div>
+                <div class="nav-item" onclick="toggleSearch()"><i class="fa-solid fa-magnifying-glass"></i> Ara</div>
             </div>
             
             <div class="library-section">
@@ -355,7 +355,7 @@
                 </div>
                 <div class="profile-btn" onclick="openSettings()">
                     <img src="https://images.unsplash.com/photo-1535713875002-d1d0cf377fde?auto=format&fit=crop&w=100&h=100" alt="Zenith Studio">
-                    <span>Zenith Studio</span>
+                    <span id="profile-name-display">Zenith Studio</span>
                     <i class="fa-solid fa-chevron-down" style="font-size: 12px; margin-left: 4px;"></i>
                 </div>
             </div>
@@ -391,6 +391,7 @@
                     <button class="play-all-btn" onclick="togglePlay()"><i class="fa-solid fa-play" id="main-play-icon"></i></button>
                     <i class="fa-regular fa-heart action-icon" onclick="this.classList.toggle('fa-solid'); this.classList.toggle('fa-regular'); this.style.color = this.classList.contains('fa-solid') ? 'var(--accent)' : '';"></i>
                     <i class="fa-solid fa-ellipsis action-icon" onclick="showToast('Seçenekler menüsü yakında eklenecek.')"></i>
+                    <input type="text" id="search-input" placeholder="Şarkı veya sanatçı ara..." onkeyup="filterSongs()" style="margin-left: auto; background: rgba(255,255,255,0.1); border: 1px solid var(--border-color); color: #fff; padding: 10px 16px; border-radius: 20px; outline: none; width: 250px; display: none;">
                 </div>
 
                 <div class="song-list-header">
@@ -461,6 +462,14 @@
                     <div class="color-swatch" style="background-color: #ef4444; color: #ef4444;" onclick="setTheme('#ef4444', '#f87171', this)"></div>
                     <div class="color-swatch" style="background-color: #3b82f6; color: #3b82f6;" onclick="setTheme('#3b82f6', '#60a5fa', this)"></div>
                     <div class="color-swatch" style="background-color: #fbbf24; color: #fbbf24;" onclick="setTheme('#fbbf24', '#fcd34d', this)"></div>
+                </div>
+            </div>
+            
+            <div class="theme-section" style="margin-top: 24px;">
+                <div class="theme-label">Kullanıcı Adı (Size Özel)</div>
+                <div style="display: flex; gap: 8px;">
+                    <input type="text" id="profile-name-input" placeholder="İsminizi girin..." style="flex: 1; background: rgba(255,255,255,0.1); border: 1px solid var(--border-color); color: #fff; padding: 8px 12px; border-radius: 6px; outline: none; font-family: inherit;">
+                    <button onclick="saveProfileName()" style="background: var(--text-base); color: #000; border: none; padding: 0 16px; border-radius: 6px; font-weight: bold; cursor: pointer;">Kaydet</button>
                 </div>
             </div>
         </div>
@@ -559,9 +568,38 @@
             showToast('Tema rengi güncellendi!');
         }
 
-        function renderSongs() {
+        function saveProfileName() {
+            const newName = document.getElementById('profile-name-input').value.trim() || 'Misafir';
+            localStorage.setItem('zenith_profile_name', newName);
+            document.getElementById('profile-name-display').innerText = newName;
+            showToast('Profil adı güncellendi!');
+        }
+
+        function toggleSearch() {
+            const searchInput = document.getElementById('search-input');
+            if (searchInput.style.display === 'none' || searchInput.style.display === '') {
+                searchInput.style.display = 'block';
+                searchInput.focus();
+                document.querySelector('.content-area').scrollIntoView({ behavior: 'smooth' });
+            } else {
+                searchInput.style.display = 'none';
+                searchInput.value = '';
+                renderSongs();
+            }
+        }
+
+        function filterSongs() {
+            const query = document.getElementById('search-input').value.toLowerCase();
+            renderSongs(query);
+        }
+
+        function renderSongs(query = "") {
             songListContainer.innerHTML = '';
             songs.forEach((song, index) => {
+                if (query) {
+                    const match = song.title.toLowerCase().includes(query) || song.artist.toLowerCase().includes(query);
+                    if (!match) return;
+                }
                 const item = document.createElement('div');
                 item.className = `song-item ${index === currentSongIndex ? 'playing' : ''}`;
                 
@@ -821,6 +859,11 @@
         }
 
         window.onload = () => {
+            const savedName = localStorage.getItem('zenith_profile_name') || 'Zenith Studio';
+            document.getElementById('profile-name-display').innerText = savedName;
+            const nameInput = document.getElementById('profile-name-input');
+            if(nameInput) nameInput.value = savedName;
+
             renderSongs();
             audioPlayer.volume = 1.0;
             
