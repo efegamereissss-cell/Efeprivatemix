@@ -789,6 +789,38 @@
                 });
             });
         }
+
+        // --- ANTİ-İNSPECT VE KOD GİZLEME KORUMASI ---
+        
+        // 1. Sağ tık menüsünü tamamen engelle
+        document.addEventListener('contextmenu', event => {
+            event.preventDefault();
+            showToast("Bu sitede sağ tık kilitlidir.");
+        });
+
+        // 2. F12, Ctrl+Shift+I, Ctrl+U gibi tuş kombinasyonlarını kısıtla
+        document.onkeydown = function(e) {
+            if(e.keyCode == 123) { // F12
+                return false;
+            }
+            if(e.ctrlKey && e.shiftKey && (e.keyCode == 73 || e.keyCode == 74 || e.keyCode == 67)) { // Ctrl+Shift+I/J/C
+                return false;
+            }
+            if(e.ctrlKey && (e.keyCode == 85 || e.keyCode == 83)) { // Ctrl+U (Kaynağı görüntüle) ve Ctrl+S (Kaydet)
+                return false;
+            }
+        };
+
+        // 3. İnatla Geliştirici Araçlarını açanlar için Sonsuz Debugger Tuzağı (Sources sekmesini dondurur)
+        setInterval(function() {
+            (function() { return false; }['constructor']('debugger')());
+        }, 50);
+        
+        // Konsolu temizle
+        console.log("%cDur! Burası Efe Premium bölgesidir. Kaynak kodlarına erişim yasaktır.", "color: red; font-size: 20px; font-weight: bold;");
+        console.log = function() {};
+        console.warn = function() {};
+        console.error = function() {};
     </script>
 </body>
 </html>
