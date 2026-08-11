@@ -664,6 +664,11 @@
                 videoContainer.classList.remove('active');
             }
             
+            // Discord RPC (Eğer masaüstü uygulamasındaysa)
+            if (window.pywebview && window.pywebview.api) {
+                window.pywebview.api.update_rpc(song.title, song.artist);
+            }
+            
             // UI Güncelleme
             document.getElementById('current-title').innerText = song.title;
             document.getElementById('current-artist').innerText = song.artist;
