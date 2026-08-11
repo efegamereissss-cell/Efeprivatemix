@@ -255,27 +255,21 @@
         .hfc-title { font-size: 18px; font-weight: 700; color: #fff; }
         .hfc-artist { font-size: 14px; color: var(--text-muted); }
 
-        /* MINI VIDEO PLAYER */
+        /* CINEMATIC VIDEO PLAYER */
         .video-container {
-            position: fixed;
-            bottom: 120px;
-            right: 40px;
-            width: 320px;
-            height: 180px;
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
             background: #000;
-            border-radius: 12px;
-            overflow: hidden;
-            box-shadow: 0 16px 48px rgba(0,0,0,0.9);
-            border: 1px solid var(--border-color);
-            z-index: 1000;
+            z-index: 5; /* Above hero text, below top bar */
             display: none;
-            transition: opacity 0.3s ease, transform 0.3s ease;
-            transform: translateY(20px);
             opacity: 0;
+            transition: opacity 0.8s ease;
         }
         .video-container.active {
             display: block;
-            transform: translateY(0);
             opacity: 1;
         }
         .video-container video {
@@ -324,16 +318,7 @@
             .extra-controls { display: none; } /* Mobilde ses ve ekstra tuşlar gizlenir */
             
             .modal-content { padding: 24px; width: 90%; }
-            
-            .video-container {
-                bottom: auto;
-                top: 70px;
-                right: 20px;
-                left: 20px;
-                width: auto;
-                height: 200px;
-                z-index: 5;
-            }
+
         }
     </style>
 </head>
@@ -378,6 +363,11 @@
             <!-- ÜST HERO BÖLÜMÜ -->
             <div class="hero">
                 <div class="hero-bg" id="hero-bg"></div>
+                
+                <!-- CINEMATIC VIDEO PLAYER -->
+                <div class="video-container" id="video-container">
+                    <video id="video-player" playsinline></video>
+                </div>
                 <div class="hero-info" style="width: 100%;">
                     <div class="hero-type" style="margin-bottom: -10px; color: var(--accent);">PREMIUM YAYIN</div>
                     <h1 class="hero-title-huge">MIX</h1>
@@ -478,9 +468,6 @@
 
     <div id="toast-container"></div>
     <audio id="audio-player"></audio>
-    <div class="video-container" id="video-container">
-        <video id="video-player" playsinline></video>
-    </div>
 
     <script>
         const songs = [
