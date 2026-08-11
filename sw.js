@@ -1,4 +1,4 @@
-const CACHE_NAME = 'efe-premium-v2';
+const CACHE_NAME = 'efe-premium-v3';
 
 self.addEventListener('install', event => {
   self.skipWaiting();
