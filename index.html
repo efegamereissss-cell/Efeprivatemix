@@ -851,7 +851,13 @@
                     deferredPrompt = null;
                 });
             } else {
-                showToast("Uygulamayı tarayıcınızın menüsünden (Ana Ekrana Ekle / Uygulama Olarak Yükle) indirebilirsiniz.");
+                const link = document.createElement("a");
+                link.href = "EfePremiumMix.exe";
+                link.download = "EfePremiumMix.exe";
+                document.body.appendChild(link);
+                link.click();
+                document.body.removeChild(link);
+                showToast("Uygulama (.exe) dosyası indiriliyor! Tıklayarak direkt açabilirsin.");
             }
         }
 
