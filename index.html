@@ -527,7 +527,7 @@
         const videoContainer = document.getElementById('video-container');
 
         function getActivePlayer() {
-            if(songs[currentSongIndex] && songs[currentSongIndex].isVideo) return videoPlayer;
+            if(songs[currentSongIndex] && songs[currentSongIndex].src.endsWith('.mp4')) return videoPlayer;
             return audioPlayer;
         }
         const playPauseBtn = document.getElementById('play-pause-btn');
@@ -577,7 +577,7 @@
                             <img src="${song.cover}" alt="Cover" class="song-cover">
                         </div>
                         <div class="song-title-artist">
-                            <div class="song-title">${song.title}${song.isVideo ? ' <span class="video-badge">VİDEO</span>' : ''}</div>
+                            <div class="song-title">${song.title}${song.src.endsWith('.mp4') ? ' <span class="video-badge">VİDEO</span>' : ''}</div>
                             <div class="song-artist">${song.artist}</div>
                         </div>
                     </div>
@@ -610,15 +610,17 @@
             const player = getActivePlayer();
             
             if (player.src.includes(song.src)) {
-                player.play();
+                let playPromise = player.play();
+                if (playPromise !== undefined) playPromise.catch(e => console.log(e));
                 isPlaying = true;
             } else {
                 player.src = song.src;
-                player.play();
+                let playPromise = player.play();
+                if (playPromise !== undefined) playPromise.catch(e => console.log(e));
                 isPlaying = true;
             }
             
-            if(song.isVideo) {
+            if(song.src.endsWith('.mp4')) {
                 videoContainer.classList.add('active');
             } else {
                 videoContainer.classList.remove('active');
@@ -643,7 +645,8 @@
             if (isPlaying) {
                 player.pause();
             } else {
-                player.play();
+                let playPromise = player.play();
+                if (playPromise !== undefined) playPromise.catch(e => console.log(e));
             }
             isPlaying = !isPlaying;
             updatePlayBtn();
